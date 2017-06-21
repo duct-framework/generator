@@ -35,10 +35,15 @@
 (defn- render-resource [path params]
   (stencil/render-string (slurp (io/resource path)) params))
 
+(defn- template-keyword [ns k]
+  (if (= ns (namespace k))
+    (str "::" (name k))
+    (str k)))
+
 (defn- generate-template [ns ks]
   (render-resource "duct/generator/template/default.clj"
                    {:namespace ns
-                    :keys (for [k ks] {:keyword k})}))
+                    :keys (for [k ks] {:keyword (template-keyword ns k)})}))
 
 (defn generator
   ([] (generator {}))
